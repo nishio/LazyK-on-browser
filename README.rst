@@ -3,6 +3,8 @@
 ===================
 
 
+- primes.txt come from http://homepages.cwi.nl/~tromp/cl/lazy-k.html
+
 TODO
 ====
 
