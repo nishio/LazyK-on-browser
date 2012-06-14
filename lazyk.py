@@ -2,7 +2,7 @@
 Lazy-K implementation
 """
 
-sample_code = file("primes.txt").read()
+sample_code = file("primes.txt").read().replace("I", "(SKK)")
 
 def get_char(s, i):
     while i < len(s):
@@ -71,6 +71,7 @@ def to_ast(tree):
 def step():
     """
     leftmost reduction
+    TODO
     """
 
 def _test():
@@ -78,5 +79,5 @@ def _test():
     doctest.testmod()
 
 _test()
-#print parse(sample_code)
+print to_ast(parse(sample_code))
 
