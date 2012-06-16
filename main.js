@@ -54,24 +54,51 @@ $(function(){
     }
     reset_black();
 
-    function draw_circle(){
-        var g = ctx.createRadialGradient(c.x,c.y,c.size,c.x,c.y,c.size*2);
+    function draw_circle(pos, size, color){
+        var g = ctx.createRadialGradient(
+            pos.x, pos.y, size,
+            pos.x, pos.y, size * 2);
 
-        g.addColorStop(0,"rgba(" + c.r + "," + c.g + "," + c.b + "," + 1 +")");
+        g.addColorStop(0,"rgba(" + color.r + "," + color.g + "," + color.b + "," + 1 +")");
         g.addColorStop(1.0,"rgba(0,0,0,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(c.x, c.y, c.size*3, 0, Math.PI*2, false);
+        ctx.arc(pos.x, pos.y, size * 3, 0, Math.PI*2, false);
         ctx.fill();
     }
-
+    var V = nhiro.V2.make;
 
     var SPLIT_ANGLE = 0.314;
-    var START_DIR = (0, -10);
+    var START_DIR = V(0, -20);
+    var START_POS = V(400, 300);
     var SCALE_CHILD = 0.99;
-    function rec_draw(tree, pos, dir){
-        // treeがstrだったら、その位置に円を書く
-        // treeがarrayだったら、その位置に小さな点を書き、2つの子について再帰
+    var S_COLOR = {r: 200, g: 100, b: 50};
+    var K_COLOR = {r: 100, g: 200, b: 50};
+    function test_tree(pos, dir, level){
+        if(level == 0) return;
+        draw_circle(pos, dir.norm() / 2, S_COLOR);
+        var left_dir = dir.rotate(SPLIT_ANGLE);
+        test_tree(pos.add(left_dir), left_dir.scale(SCALE_CHILD), level - 1);
+        var right_dir = dir.rotate(-SPLIT_ANGLE);
+        test_tree(pos.add(right_dir), right_dir.scale(SCALE_CHILD), level - 1);
     }
+
+    function rec_draw(tree, pos, dir){
+        if(typeof(tree) == "string"){
+            // TODO change color by tree value
+            var color = S_COLOR;
+            if(tree == "K") color = K_COLOR;
+            draw_circle(pos, dir.norm() / 4, color);
+        }else{
+            // draw small circle
+            draw_circle(pos, dir.norm() / 20, S_COLOR);
+            // recur children
+            var left_dir = dir.rotate(SPLIT_ANGLE);
+            rec_draw(tree[0], pos.add(left_dir), left_dir.scale(SCALE_CHILD));
+            var right_dir = dir.rotate(-SPLIT_ANGLE);
+            rec_draw(tree[1], pos.add(right_dir), right_dir.scale(SCALE_CHILD));
+        }
+    }
+    rec_draw(ast, START_POS, START_DIR);
 
 });

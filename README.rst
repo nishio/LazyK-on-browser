@@ -10,4 +10,5 @@ TODO
 
 - Lazy K impl.
 - Lazy K visualization (Beauty K)
+- jscc support
 - http://jsdo.it/nishio/2Fos/edit
