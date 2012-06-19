@@ -1,8 +1,10 @@
 /**
  * Tree Layout
- * http://dirk.jivas.de/papers/buchheim02improving.pdf
+ * by NISHIO Hirokazu, GPLv3
+ * see http://dirk.jivas.de/papers/buchheim02improving.pdf
  */
- (function(){
+goog.provide("nhiro.tree_layout");
+nhiro.tree_layout = (function(){
      /** Node :: {{value: *, children: Array.<Node>, parent: Node, child_id: number}} */
 
      function make_tree(arg){
@@ -144,7 +146,7 @@
                      + getDistance(vIMinus, vIPlus));
 
              if (shift > 0) {
-                 moveSubtree(
+                 move_subtree(
                      ancestor(vIMinus, v, parentOfV, defaultAncestor),
                      v, parentOfV, shift);
                  sIPlus = sIPlus + shift;
@@ -186,7 +188,15 @@
          }
      }
 
-     function move_subtree(w_minus, w_plus, parent, shift){
+    function is_sibling(){};
+    function get_children(){};
+    function get_number(){};
+    function last_child(){};
+    function getDistance(){};
+    function ancestor(){};
+
+    
+     function move_subtree(wMinus, wPlus, parent, shift){
          var subtrees = get_number(wPlus, parent) - get_number(wMinus, parent);
          wPlus.change = wPlus.change - shift / subtrees;
          wPlus.shift = wPlus.shift + shift;
@@ -199,26 +209,28 @@
          var shift = 0;
          var change = 0;
          v.children.reverse().forEach(function(w){
-             prelim[w] = prelim[w] + shift;
-             modifier[w] = modifier[w] + shift;
-             change += change[w];
-             shift += shift[w] + change;
+             w.prelim = w.prelim + shift;
+             w.modifier = w.modifier + shift;
+             change += w.change;
+             shift += w.shift + change;
          });
      }
 
      function get_ancestor(v, w, default_ancestor){
-         if(is_sibling(ancestor[v], w)){
-             return ancestor[v];
+         if(is_sibling(v.ancestor, w)){
+             return v.ancestor;
          }else{
              return default_ancestor;
          }
      }
 
      function second_walk(v, m, level){
-         x[v] = prelim[v] + m;
-         y[v] = level;
-         for(w in get_children(v)){
-             second_walk(w, m + modifier[v]);
-         }
+         v.x = v.prelim + m;
+         v.y = level;
+         v.children.forEach(function(w){
+             second_walk(w, m + v.modifier);
+         });
      }
+
+    
  })();
