@@ -68,8 +68,8 @@ $(function(){
     }
     var V = nhiro.V2.make;
 
-    var SPLIT_ANGLE = 0.314;
-    var START_DIR = V(0, -20);
+    var SPLIT_ANGLE = 3.14 / 2;
+    var START_DIR = V(0, -10);
     var START_POS = V(400, 300);
     var SCALE_CHILD = 0.99;
     var S_COLOR = {r: 200, g: 100, b: 50};
@@ -83,7 +83,8 @@ $(function(){
         test_tree(pos.add(right_dir), right_dir.scale(SCALE_CHILD), level - 1);
     }
 
-    function rec_draw(tree, pos, dir){
+    function rec_draw(tree, pos, dir, level){
+        var split = SPLIT_ANGLE / level;
         if(typeof(tree) == "string"){
             // TODO change color by tree value
             var color = S_COLOR;
@@ -93,12 +94,12 @@ $(function(){
             // draw small circle
             draw_circle(pos, dir.norm() / 20, S_COLOR);
             // recur children
-            var left_dir = dir.rotate(SPLIT_ANGLE);
-            rec_draw(tree[0], pos.add(left_dir), left_dir.scale(SCALE_CHILD));
-            var right_dir = dir.rotate(-SPLIT_ANGLE);
-            rec_draw(tree[1], pos.add(right_dir), right_dir.scale(SCALE_CHILD));
+            var left_dir = dir.rotate(split);
+            rec_draw(tree[0], pos.add(left_dir), left_dir.scale(SCALE_CHILD), level + 1);
+            var right_dir = dir.rotate(-split);
+            rec_draw(tree[1], pos.add(right_dir), right_dir.scale(SCALE_CHILD), level + 1);
         }
     }
-    rec_draw(ast, START_POS, START_DIR);
+    // rec_draw(ast, START_POS, START_DIR, 1);
 
 });
