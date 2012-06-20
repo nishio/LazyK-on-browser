@@ -1,1 +1,6 @@
+# jscc tools
 .jscc
+
+# to serve with SimpleHTTPServer
+LazyK-on-browser
+common
