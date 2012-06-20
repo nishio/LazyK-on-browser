@@ -7,6 +7,7 @@
 goog.provide('nhiro.tree_layout');
 nhiro.tree_layout = (function() {
     var tree_layout = {};
+    var bounds = {}; // calculated by second_walk
     /** Node :: {{value: *, children: Array.<Node>,
                   parent: Node, child_id: number}} */
     // assertions
@@ -182,7 +183,7 @@ nhiro.tree_layout = (function() {
         return tree;
     }
     tree_layout.make_tree = make_tree;
-    
+
     function all_nodes(tree) {
         if (is_leaf(tree)) {
             return [tree];
@@ -212,7 +213,9 @@ nhiro.tree_layout = (function() {
             v.ancestor = v;
         });
         first_walk(tree);
+        bounds = {max_x: 0, min_x: 0, max_y: 0};
         second_walk(tree, -get_prelim(tree), 0);
+        tree.bounds = bounds;
         return tree;
     }
     tree_layout.start = start;
@@ -375,6 +378,16 @@ nhiro.tree_layout = (function() {
     function second_walk(v, m, level) {
         v.x = get_prelim(v) + m;
         v.y = level;
+        if(v.x > bounds.max_x){
+            bounds.max_x = v.x;
+        }
+        if(v.x < bounds.min_x){
+            bounds.min_x = v.x;
+        }
+        if(v.y > bounds.max_y){
+            bounds.max_y = v.y;
+        }
+
         v.children.forEach(function(w) {
             second_walk(w, m + get_modifier(v), level + 1);
         });

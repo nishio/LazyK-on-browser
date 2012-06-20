@@ -23,11 +23,11 @@ main.main = (function() {
         b : 0,
         speed: 0
     };
-    var width, height;
+    var canvas_width, canvas_height;
     var circles;
     var maxSpeed = 4;
     var canvas;
-    var ctx;
+    var context;
     var SPLIT_ANGLE = 3.14 / 2;
     var SCALE_CHILD = 0.99;
     var S_COLOR = {r: 200, g: 100, b: 50};
@@ -50,41 +50,46 @@ main.main = (function() {
         })();
 
         canvas = document.getElementById("world");
-        ctx = canvas.getContext("2d");
-        width = canvas.width;
-        height = canvas.height;
+        context = canvas.getContext("2d");
+        context.strokeStyle = "#a0a0a0";
+        canvas_width = canvas.width;
+        canvas_height = canvas.height;
         reset_black();
 
         V = nhiro.V2.make;
         START_DIR = V(0, -10);
         START_POS = V(400, 300);
         //rec_draw(ast, START_POS, START_DIR, 1);
-        rec_draw_tree(
-            nhiro.tree_layout.start(
-                nhiro.tree_layout.make_tree(ast)));
+        var tree = nhiro.tree_layout.start(
+            nhiro.tree_layout.make_tree(ast));
+
+        // viewport transform
+        var width = tree.bounds.max_x - tree.bounds.min_x + MARGIN;
+        var height = tree.bounds.max_y + MARGIN;
+        viewport.scale = Math.min(canvas_width / width, canvas_height / height);
+
+        rec_draw_tree(tree);
     }
 
     function reset_black(){
-        ctx.globalCompositeOperation = "source-over";
-        ctx.fillStyle = "black";
-        ctx.fillRect(0,0,width,height);
-        ctx.globalCompositeOperation = "lighter";
+        context.globalCompositeOperation = "source-over";
+        context.fillStyle = "black";
+        context.fillRect(0,0,canvas_width,canvas_height);
+        context.globalCompositeOperation = "lighter";
     }
 
     function draw_circle(pos, size, color){
-        var g = ctx.createRadialGradient(
+        var g = context.createRadialGradient(
             pos.x, pos.y, size,
             pos.x, pos.y, size * 2);
 
         g.addColorStop(0,"rgba(" + color.r + "," + color.g + "," + color.b + "," + 1 +")");
         g.addColorStop(1.0,"rgba(0,0,0,0)");
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, size * 3, 0, Math.PI*2, false);
-        ctx.fill();
+        context.fillStyle = g;
+        context.beginPath();
+        context.arc(pos.x, pos.y, size * 3, 0, Math.PI*2, false);
+        context.fill();
     }
-
-
 
     function test_tree(pos, dir, level){
         if(level == 0) return;
@@ -112,11 +117,26 @@ main.main = (function() {
         }
     }
 
+    var MARGIN = 20;
+    function viewport(p){
+        return V((p.x + MARGIN / 2) * viewport.scale + canvas_width / 2,
+                 (p.y + + MARGIN / 2) * viewport.scale);
+    }
+    function draw_line_to_children(p){
+        var from = viewport(p);
+        context.beginPath();
+        p.children.forEach(function(q){
+            var to = viewport(q);
+            context.moveTo(from.x, from.y);
+            context.lineTo(to.x, to.y);
+        });
+        context.stroke();
+    }
     function rec_draw_tree(tree){
-        var pos = V(tree.x * 5 + 300, tree.y * 5 + 200);
+        var pos = viewport(tree);
         if(tree.value == "*"){
             // draw small circle
-            draw_circle(pos, 1, S_COLOR);
+            draw_line_to_children(tree);
             // recur children
             rec_draw_tree(tree.children[0]);
             rec_draw_tree(tree.children[1]);
