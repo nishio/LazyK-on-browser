@@ -6,6 +6,7 @@
  */
 goog.provide('nhiro.tree_layout');
 nhiro.tree_layout = (function() {
+    var tree_layout = {};
     /** Node :: {{value: *, children: Array.<Node>,
                   parent: Node, child_id: number}} */
     // assertions
@@ -180,7 +181,8 @@ nhiro.tree_layout = (function() {
         tree.children = children;
         return tree;
     }
-
+    tree_layout.make_tree = make_tree;
+    
     function all_nodes(tree) {
         if (is_leaf(tree)) {
             return [tree];
@@ -203,7 +205,7 @@ nhiro.tree_layout = (function() {
         return (v.children.length != 0);
     }
 
-    function tree_layout(tree) {
+    function start(tree) {
         all_nodes(tree).forEach(function(v) {
             v.modifier = 0;
             v.thread = null;
@@ -213,6 +215,7 @@ nhiro.tree_layout = (function() {
         second_walk(tree, -get_prelim(tree), 0);
         return tree;
     }
+    tree_layout.start = start;
 
     function is_first_sibling(v) {
         return (v.child_id == 0 // first child
@@ -391,6 +394,8 @@ nhiro.tree_layout = (function() {
 
     // test
     nhiro.assert(
-        tree_to_str(tree_layout(make_tree([1, 2, [3, 4, 5]]))) ==
+        tree_to_str(start(make_tree([1, 2, [3, 4, 5]]))) ==
             '(0, 0)[(-1, 1), (0, 1), (1, 1)[(0, 2), (1, 2), (2, 2)]]');
+
+    return tree_layout;
 })();
