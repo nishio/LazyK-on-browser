@@ -1,6 +1,7 @@
 goog.provide('main.main');
 goog.require('nhiro.V2');
 goog.require('nhiro.tree_layout');
+goog.require('nhiro.lazyk.parser');
 
 main.main = (function() {
     // forked from daichi1128's "glow effect expriment" http://jsdo.it/daichi1128/k23o
@@ -59,16 +60,35 @@ main.main = (function() {
         V = nhiro.V2.make;
         START_DIR = V(0, -10);
         START_POS = V(400, 300);
-        //rec_draw(ast, START_POS, START_DIR, 1);
-        var tree = nhiro.tree_layout.start(
-            nhiro.tree_layout.make_tree(ast));
 
-        // viewport transform
-        var width = tree.bounds.max_x - tree.bounds.min_x + MARGIN;
-        var height = tree.bounds.max_y + MARGIN;
-        viewport.scale = Math.min(canvas_width / width, canvas_height / height);
+        var dom_code = $('#code');
+        var code = dom_code.val();
+        setInterval(function(){
+            var _code = dom_code.val();
+            if(_code != code){
+                code = _code;
+                repaint();
+            }
+        }, 10);
 
-        rec_draw_tree(tree);
+        function repaint(){
+            try{
+                var ast = nhiro.lazyk.parser(code);
+                console.log(ast);
+                var tree = nhiro.tree_layout.start(
+                    nhiro.tree_layout.make_tree(ast));
+
+                // viewport transform
+                var width = tree.bounds.max_x - tree.bounds.min_x + MARGIN;
+                var height = tree.bounds.max_y + MARGIN;
+                viewport.scale = Math.min(canvas_width / width, canvas_height / height);
+
+                reset_black();
+                rec_draw_tree(tree);
+            }catch (e){
+                // TODO: show syntax error
+            }
+        }
     }
 
     function reset_black(){
