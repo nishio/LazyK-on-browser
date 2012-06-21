@@ -75,13 +75,16 @@ def to_ast(tree):
 def parse(s):
     return to_ast(str_to_st(s))
 
-def step(tree):
+
+def reduce_node(tree):
     """
-    leftmost reduction
-    >>> step(parse("KSI"))
+    >>> reduce_node(parse("KSI"))
     'S'
-    >>> step(parse("SISK"))
+    >>> reduce_node(parse("SISK"))
     [['I', 'K'], ['S', 'K']]
+    >>> reduce_node(parse("IS"))
+    'S'
+    >>> reduce_node(parse("SI")) # None returns
     """
     try:
         (i, x) = tree
