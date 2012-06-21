@@ -66,6 +66,9 @@ def to_ast(tree):
         head = [head, arg]
     return head
 
+def parse(s):
+    return to_ast(str_to_st(s))
+
 def step(tree):
     """
     leftmost reduction
