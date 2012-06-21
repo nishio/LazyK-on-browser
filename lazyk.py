@@ -59,7 +59,6 @@ def to_ast(tree):
     """
     if isinstance(tree, str): return tree
     assert isinstance(tree, list)
-    assert len(tree) > 1
     tree = map(to_ast, tree)
     head = tree[0]
     args = tree[1:]
