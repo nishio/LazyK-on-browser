@@ -163,7 +163,7 @@ main.main = (function() {
         }else{
             var color = S_COLOR;
             if(tree.value == "K") color = K_COLOR;
-            draw_circle(pos, 2, color);
+            draw_circle(pos, viewport.scale * 0.4, color);
         }
     }
 
