@@ -92,6 +92,18 @@ main.main = (function() {
                 // TODO: show syntax error
             }
         }
+
+        var dom_next = $('#next');
+        var i = 0;
+        dom_next.click(function(){
+            var ast = Voids[i];
+            i++;
+            var tree = nhiro.tree_layout.start(
+                nhiro.tree_layout.make_tree(ast));
+            adjust_viewport(tree);
+            reset_black();
+            rec_draw_tree(tree);
+        });
     }
 
     function reset_black(){
