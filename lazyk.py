@@ -5,7 +5,7 @@ sample_code = file("primes.txt").read().replace("I", "(SKK)")
 
 def get_char(s, i):
     while i < len(s):
-        if s[i] in "SKI()":
+        if s[i] in "SKIxyz()":
             return s[i], i + 1
         i += 1
     return None, i # no character left
@@ -33,9 +33,7 @@ def str_to_st(s, i=0, is_top_level=True):
                 return funcs # successfully finished
             raise RuntimeError("SyntaxError: EOF")
 
-        if c in "SKI":
-            funcs.append(c)
-        elif c == "(":
+        if c == "(":
             fs, i = str_to_st(s, i, False)
             funcs.append(fs)
 
@@ -43,6 +41,10 @@ def str_to_st(s, i=0, is_top_level=True):
             if is_top_level:
                 raise RuntimeError("too many close-palen")
             return (funcs, i)
+
+        else:
+            funcs.append(c)
+
 
 def to_ast(tree):
     """
