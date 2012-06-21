@@ -90,21 +90,21 @@ def reduce_node(tree):
         (i, x) = tree
         if i == "I":
             return x
-    except TypeError, e:
+    except:
         pass # not match
 
     try:
         (k, x), y = tree
         if k == "K":
             return x
-    except TypeError, e:
+    except:
         pass # not match
 
     try:
         (((s, x), y), z) = tree
         if s == "S":
             return [[x, z], [y, z]]
-    except TypeError, e:
+    except:
         pass # not match
 
     return tree
