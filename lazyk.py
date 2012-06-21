@@ -72,9 +72,34 @@ def parse(s):
 def step(tree):
     """
     leftmost reduction
-
+    >>> step(parse("KSI"))
+    'S'
+    >>> step(parse("SISK"))
+    [['I', 'K'], ['S', 'K']]
     """
-    
+    try:
+        (i, x) = tree
+        if i == "I":
+            return x
+    except TypeError, e:
+        pass # not match
+
+    try:
+        (k, x), y = tree
+        if k == "K":
+            return x
+    except TypeError, e:
+        pass # not match
+
+    try:
+        (((s, x), y), z) = tree
+        if s == "S":
+            return [[x, z], [y, z]]
+    except TypeError, e:
+        pass # not match
+
+    return tree
+
 def _test():
     import doctest
     doctest.testmod()
