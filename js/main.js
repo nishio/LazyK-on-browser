@@ -82,7 +82,6 @@ main.main = (function() {
         function repaint(){
             try{
                 var ast = nhiro.lazyk.parser(code);
-                console.log(ast);
                 var tree = nhiro.tree_layout.start(
                     nhiro.tree_layout.make_tree(ast));
                 adjust_viewport(tree);
