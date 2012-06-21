@@ -3,12 +3,14 @@ Lazy-K implementation
 """
 sample_code = file("primes.txt").read().replace("I", "(SKK)")
 
+
 def get_char(s, i):
     while i < len(s):
         if s[i] in "SKIxyz()":
             return s[i], i + 1
         i += 1
-    return None, i # no character left
+    return None, i  # no character left
+
 
 def str_to_st(s, i=0, is_top_level=True):
     """
@@ -28,9 +30,9 @@ def str_to_st(s, i=0, is_top_level=True):
     funcs = []
     while True:
         c, i = get_char(s, i)
-        if not c: # no character left
+        if not c:  # no character left
             if is_top_level:
-                return funcs # successfully finished
+                return funcs  # successfully finished
             raise RuntimeError("SyntaxError: EOF")
 
         if c == "(":
@@ -63,7 +65,8 @@ def to_ast(tree):
     >>> to_ast(str_to_st("SKIS"))
     [[['S', 'K'], 'I'], 'S']
     """
-    if _is_leaf(tree): return tree
+    if _is_leaf(tree):
+        return tree
     assert isinstance(tree, list)
     tree = map(to_ast, tree)
     head = tree[0]
@@ -71,6 +74,7 @@ def to_ast(tree):
     for arg in args:
         head = [head, arg]
     return head
+
 
 def parse(s):
     return to_ast(str_to_st(s))
@@ -91,23 +95,24 @@ def reduce_node(tree):
         if i == "I":
             return x
     except:
-        pass # not match
+        pass  # not match
 
     try:
         (k, x), y = tree
         if k == "K":
             return x
     except:
-        pass # not match
+        pass  # not match
 
     try:
         (((s, x), y), z) = tree
         if s == "S":
             return [[x, z], [y, z]]
     except:
-        pass # not match
+        pass  # not match
 
     return None
+
 
 def step(tree):
     """
@@ -138,25 +143,29 @@ def step(tree):
     >>> step(_)
     ['y', 'x']
     """
-    if _is_leaf(tree): return None
+    if _is_leaf(tree):
+        return None
     # Is this node reducible?
     ret = reduce_node(tree)
-    if ret: return ret
+    if ret:
+        return ret
     # No, this node is not reducible
     f, x = tree
     # Is left side reducible?
     ret = step(f)
-    if ret: return [ret, x]
+    if ret:
+        return [ret, x]
     # No. Is right side reducible?
     ret = step(x)
-    if ret: return [f, ret]
+    if ret:
+        return [f, ret]
     # No. Nothing reducible.
     return None
+
 
 def _test():
     import doctest
     doctest.testmod()
 
-_test()
-
-
+if __name__ == "__main__":
+    _test()
