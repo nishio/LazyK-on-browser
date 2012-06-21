@@ -10,18 +10,18 @@ def get_char(s, i):
         i += 1
     return None, i # no character left
 
-def parse(s, i=0, is_top_level=True):
+def str_to_st(s, i=0, is_top_level=True):
     """
-    >>> parse("SKI")
+    >>> str_to_st("SKI")
     ['S', 'K', 'I']
-    >>> parse("S(KI)")
+    >>> str_to_st("S(KI)")
     ['S', ['K', 'I']]
-    >>> parse("S(S(KK))")
+    >>> str_to_st("S(S(KK))")
     ['S', ['S', ['K', 'K']]]
-    >>> parse("(")
+    >>> str_to_st("(")
     Traceback (most recent call last):
     RuntimeError: SyntaxError: EOF
-    >>> parse(")")
+    >>> str_to_st(")")
     Traceback (most recent call last):
     RuntimeError: too many close-palen
     """
@@ -36,7 +36,7 @@ def parse(s, i=0, is_top_level=True):
         if c in "SKI":
             funcs.append(c)
         elif c == "(":
-            fs, i = parse(s, i, False)
+            fs, i = str_to_st(s, i, False)
             funcs.append(fs)
 
         elif c == ")":
@@ -47,14 +47,14 @@ def parse(s, i=0, is_top_level=True):
 def to_ast(tree):
     """
     change syntac tree into 2-length tuple and literal.
-    >>> to_ast(parse("SKI"))
+    >>> to_ast(str_to_st("SKI"))
     [['S', 'K'], 'I']
-    >>> to_ast(parse("S(KI)"))
+    >>> to_ast(str_to_st("S(KI)"))
     ['S', ['K', 'I']]
 
-    >>> parse("SKIS")
+    >>> str_to_st("SKIS")
     ['S', 'K', 'I', 'S']
-    >>> to_ast(parse("SKIS"))
+    >>> to_ast(str_to_st("SKIS"))
     [[['S', 'K'], 'I'], 'S']
     """
     if isinstance(tree, str): return tree
@@ -66,16 +66,16 @@ def to_ast(tree):
         head = [head, arg]
     return head
 
-def step():
+def step(tree):
     """
     leftmost reduction
-    TODO
-    """
 
+    """
+    
 def _test():
     import doctest
     doctest.testmod()
 
 _test()
-print to_ast(parse(sample_code))
+
 
