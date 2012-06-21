@@ -71,18 +71,21 @@ main.main = (function() {
             }
         }, 10);
 
+        function adjust_viewport(tree){
+            // viewport transform
+            var width = tree.bounds.max_x - tree.bounds.min_x + MARGIN;
+            var height = tree.bounds.max_y + MARGIN;
+            viewport.scale = Math.min(canvas_width / width, canvas_height / height);
+            viewport.offset_x = -tree.bounds.min_x + MARGIN / 2
+        }
+
         function repaint(){
             try{
                 var ast = nhiro.lazyk.parser(code);
                 console.log(ast);
                 var tree = nhiro.tree_layout.start(
                     nhiro.tree_layout.make_tree(ast));
-
-                // viewport transform
-                var width = tree.bounds.max_x - tree.bounds.min_x + MARGIN;
-                var height = tree.bounds.max_y + MARGIN;
-                viewport.scale = Math.min(canvas_width / width, canvas_height / height);
-
+                adjust_viewport(tree);
                 reset_black();
                 rec_draw_tree(tree);
             }catch (e){
@@ -137,9 +140,9 @@ main.main = (function() {
         }
     }
 
-    var MARGIN = 20;
+    var MARGIN = 2;
     function viewport(p){
-        return V((p.x + MARGIN / 2) * viewport.scale + canvas_width / 2,
+        return V((p.x + viewport.offset_x) * viewport.scale,
                  (p.y + MARGIN / 2) * viewport.scale);
     }
     function draw_line_to_children(p){
