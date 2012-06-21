@@ -46,6 +46,10 @@ def str_to_st(s, i=0, is_top_level=True):
             funcs.append(c)
 
 
+def _is_leaf(x):
+    return isinstance(x, str)
+
+
 def to_ast(tree):
     """
     change syntac tree into 2-length tuple and literal.
@@ -59,7 +63,7 @@ def to_ast(tree):
     >>> to_ast(str_to_st("SKIS"))
     [[['S', 'K'], 'I'], 'S']
     """
-    if isinstance(tree, str): return tree
+    if _is_leaf(tree): return tree
     assert isinstance(tree, list)
     tree = map(to_ast, tree)
     head = tree[0]
