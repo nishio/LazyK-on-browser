@@ -107,7 +107,51 @@ def reduce_node(tree):
     except:
         pass # not match
 
-    return tree
+    return None
+
+def step(tree):
+    """
+    step execution: leftmost reduction
+    recursive
+    not destructive
+    if not reduced, return None
+
+    # I is reduced before K (leftmost reduction)
+    >>> step(parse("I(KSI)"))
+    [['K', 'S'], 'I']
+
+    # SKK = I
+    >>> step(parse("SKKx"))
+    [['K', 'x'], ['K', 'x']]
+    >>> step(_)
+    'x'
+
+    # Txy = yx, T = S(K(SI))K
+    >>> step(parse("S(K(SI))Kxy"))
+    [[[['K', ['S', 'I']], 'x'], ['K', 'x']], 'y']
+    >>> step(_)
+    [[['S', 'I'], ['K', 'x']], 'y']
+    >>> step(_)
+    [['I', 'y'], [['K', 'x'], 'y']]
+    >>> step(_)
+    ['y', [['K', 'x'], 'y']]
+    >>> step(_)
+    ['y', 'x']
+    """
+    if _is_leaf(tree): return None
+    # Is this node reducible?
+    ret = reduce_node(tree)
+    if ret: return ret
+    # No, this node is not reducible
+    f, x = tree
+    # Is left side reducible?
+    ret = step(f)
+    if ret: return [ret, x]
+    # No. Is right side reducible?
+    ret = step(x)
+    if ret: return [f, ret]
+    # No. Nothing reducible.
+    return None
 
 def _test():
     import doctest
