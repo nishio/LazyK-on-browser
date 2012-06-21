@@ -140,7 +140,7 @@ main.main = (function() {
     var MARGIN = 20;
     function viewport(p){
         return V((p.x + MARGIN / 2) * viewport.scale + canvas_width / 2,
-                 (p.y + + MARGIN / 2) * viewport.scale);
+                 (p.y + MARGIN / 2) * viewport.scale);
     }
     function draw_line_to_children(p){
         var from = viewport(p);
