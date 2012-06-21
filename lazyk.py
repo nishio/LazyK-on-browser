@@ -1,7 +1,6 @@
 """
 Lazy-K implementation
 """
-sample_code = file("primes.txt").read().replace("I", "(SKK)")
 
 
 def get_char(s, i):
