@@ -2,6 +2,7 @@ goog.provide('main.main');
 goog.require('nhiro.V2');
 goog.require('nhiro.tree_layout');
 goog.require('nhiro.lazyk.parser');
+goog.require('nhiro.lazyk.executer');
 
 main.main = (function() {
     // forked from daichi1128's "glow effect expriment" http://jsdo.it/daichi1128/k23o
@@ -79,9 +80,10 @@ main.main = (function() {
             viewport.offset_x = -tree.bounds.min_x + MARGIN / 2
         }
 
+        var ast = nhiro.lazyk.parser("S(SKK)(SKK)S");
         function repaint(){
             try{
-                var ast = nhiro.lazyk.parser(code);
+                ast = nhiro.lazyk.parser(code);
                 var tree = nhiro.tree_layout.start(
                     nhiro.tree_layout.make_tree(ast));
                 adjust_viewport(tree);
@@ -95,8 +97,12 @@ main.main = (function() {
         var dom_next = $('#next');
         var i = 0;
         dom_next.click(function(){
-            var ast = Voids[i];
-            i++;
+            new_ast = nhiro.lazyk.executer.step(ast);
+            if(new_ast == null){
+                // TODO: show no more executable
+                return;
+            }
+            ast = new_ast;
             var tree = nhiro.tree_layout.start(
                 nhiro.tree_layout.make_tree(ast));
             adjust_viewport(tree);
