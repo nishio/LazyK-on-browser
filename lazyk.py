@@ -162,6 +162,19 @@ def step(tree):
     return None
 
 
+def evaluate(tree, limit=None):
+    """
+    continue to call 'step'
+    """
+    step_count = 0
+    while limit == None or step_count < limit:
+        ret = tree
+        tree = step(tree)
+        if tree == None:
+            return ret
+        step_count += 1
+
+
 def _test():
     import doctest
     doctest.testmod()
