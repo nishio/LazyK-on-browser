@@ -31,6 +31,7 @@ class Output(Function):
     def __call__(self, x):
         charcode = evaluate([[x, Increment], 0])
         sys.stdout.write(chr(charcode))
+        sys.stdout.flush()
         return OutputResult
 
 Output = Output() # singleton
