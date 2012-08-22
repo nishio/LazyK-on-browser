@@ -22,7 +22,9 @@ class Stream(Function):
 
 class Increment(Function):
     def __call__(self, n):
-        return n + 1
+        if isinstance(n, int):
+            return n + 1
+        raise NotImplementedError
 
 Increment = Increment()
 
@@ -36,6 +38,46 @@ class Output(Function):
 
 Output = Output() # singleton
 
+class NumberF(Function):
+    def __init__(self, n, f):
+        assert isinstance(n, int)
+        self.n = n
+        self.f = f
+
+    def __call__(self, x):
+        n = self.n
+        if self.f == Increment and isinstance(x, int):
+            return x + self.n
+
+        ret = x
+        while n > 0:
+            n -= 1
+            ret = [self.f, ret]
+        return ret
+
+    def __repr__(self):
+        return "<%s: %d>" % (self.__class__.__name__, self.n)
+
+class Number(Function):
+    def __init__(self, n):
+        self.n = n
+
+    def __call__(self, f):
+        return NumberF(self.n, f)
+
+    def __repr__(self):
+        return "<%s: %d>" % (self.__class__.__name__, self.n)
+
+
+class Input(Stream):
+    def get_head(self):
+        charcode = ord(sys.stdin.read(1))
+        return Number(charcode)
+
+    def get_tail(self):
+        return self
+
+Input = Input() # singleton (ok?)
 
 class OutputResult(Function):
     def __call__(self, x):
