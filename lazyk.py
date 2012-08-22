@@ -1,10 +1,50 @@
 """
 Lazy-K implementation
 """
+import sys
 
+class Function(object):
+    def __repr__(self):
+        return "<%s>" % self.__class__.__name__
+
+    def __call__(self, x):
+        # mocking bird function for sample
+        return [x, x]
+
+
+class Stream(Function):
+    """
+    (cons X Y) = (lambda (f) (f X Y))
+    """
+    def __call__(self, f):
+        return [[f, self.get_head()], self.get_tail()]
+
+
+class Increment(Function):
+    def __call__(self, n):
+        return n + 1
+
+Increment = Increment()
+
+
+class Output(Function):
+    def __call__(self, x):
+        charcode = evaluate([[x, Increment], 0])
+        sys.stdout.write(chr(charcode))
+        return OutputResult
+
+Output = Output() # singleton
+
+
+class OutputResult(Function):
+    def __call__(self, x):
+        return [x, Output];
+
+OutputResult = OutputResult() # singleton
 
 def get_char(s, i):
     while i < len(s):
+        # xyz are for test
         if s[i] in "SKIxyz()":
             return s[i], i + 1
         i += 1
@@ -48,7 +88,7 @@ def str_to_st(s, i=0, is_top_level=True):
 
 
 def _is_leaf(x):
-    return isinstance(x, str)
+    return not isinstance(x, list)
 
 
 def to_ast(tree):
@@ -88,6 +128,8 @@ def reduce_node(tree):
     >>> reduce_node(parse("IS"))
     'S'
     >>> reduce_node(parse("SI")) # None returns
+    >>> reduce_node([Function(), "x"]) # sample mocking bird
+    ['x', 'x']
     """
     try:
         (i, x) = tree
