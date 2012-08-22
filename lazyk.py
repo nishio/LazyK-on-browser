@@ -110,6 +110,13 @@ def reduce_node(tree):
     except:
         pass  # not match
 
+    try:
+        (f, x) = tree
+        if isinstance(f, Function):
+            return f(x)
+    except:
+        pass  # not match
+
     return None
 
 
