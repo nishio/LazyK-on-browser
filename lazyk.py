@@ -235,6 +235,7 @@ def step(tree):
     >>> step(_)
     ['y', 'x']
     """
+
     if _is_leaf(tree):
         return None
     # Is this node reducible?
